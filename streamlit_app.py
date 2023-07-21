@@ -1,27 +1,36 @@
 import streamlit as st
+from elevenlabs import voices, generate
 
-def main():
-    st.title("Web Audio API with Streamlit")
+def split_text(text, limit=400):
+    """Split the text into chunks of up to 400 characters."""
+    words = text.split()
+    chunks = []
+    current_chunk = ''
 
+    for word in words:
+        if len(current_chunk) + len(word) <= limit:
+            current_chunk += ' ' + word
+        else:
+            chunks.append(current_chunk.strip())
+            current_chunk = word
+    if current_chunk:
+        chunks.append(current_chunk.strip())
     
+    return chunks
 
-    # Embed the custom audio component
-    st.components.v1.html(open("audio_component.html", "r").read(), width=200, height=50)
+st.title('ElevenLabs Audio Generator')
 
-    # Example audio file (replace with your audio file URL)
-    audio_url = "https://example.com/audio_file.mp3"
+user_input = st.text_area('Enter/Paste your text here:', height=200)
 
-    st.write("Audio Player:")
-    st.audio(audio_url, format="audio/mp3", start_time=0)
+if user_input:
+    # Splitting the input into 400 character chunks
+    text_chunks = split_text(user_input)
 
-    st.write("Volume Control:")
-    volume = st.slider("Volume", min_value=0.0, max_value=1.0, value=0.5, step=0.01)
+    # Display the list of voices
+    voice_list = voices()
+    selected_voice = st.selectbox('Select a voice:', voice_list)
 
-    st.write("Instructions:")
-    st.write("1. Adjust the volume using the slider above.")
-    st.write("2. Press play on the audio player to hear the audio.")
-
-if __name__ == "__main__":
-    main()
-
-
+    # Play each chunk in succession
+    for chunk in text_chunks:
+        audio = generate(text=chunk, voice=selected_voice)
+        st.audio(audio.content, format='audio/wav')
