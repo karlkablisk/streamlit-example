@@ -1,71 +1,20 @@
 import streamlit as st
-import requests
 
-# Constants
-PIXABAY_SECRET = st.secrets["PIXABAY_API_SECRET"]
-#PIXABAY_API_KEY = PIXABAY_SECRET 
-PIXABAY_API_KEY = '13689623-be5edb4373e4b7e250a22e3ce'  # Replace with your Pixabay API key
-
-
-# Pixabay API base URL
-PIXABAY_API_URL = 'https://pixabay.com/api/'
-
-# Fetch media from Pixabay
-def fetch_media(query, media_type, audio_type=None):
-    params = {
-        'key': PIXABAY_API_KEY,
-        'q': query,
-        'image_type': 'photo' if media_type == 'image' else None,
-        'video_type': 'film' if media_type == 'video' else None,
-        'type': audio_type if media_type == 'audio' else None,
-        'per_page': 1  # We're only interested in the first result
-    }
-    
-    response = requests.get(PIXABAY_API_URL, params=params)
-    return response.json()
-
-# Main function
 def main():
-    st.title('Pixabay Media Search and Display')
+    st.title("Web Audio API with Streamlit")
 
-    # Sidebar
-    with st.sidebar:
-        st.header("Controls")
-        
-        # Image search
-        image_query = st.text_input("Search for an Image:")
-        if st.button("Search Image"):
-            image_data = fetch_media(image_query, 'image')
-            if image_data['hits']:
-                st.session_state['image_url'] = image_data['hits'][0]['webformatURL']
+    # Example audio file (replace with your audio file URL)
+    audio_url = "https://example.com/audio_file.mp3"
 
-        # Video search
-        video_query = st.text_input("Search for a Video:")
-        if st.button("Search Video"):
-            video_data = fetch_media(video_query, 'video')
-            if video_data['hits']:
-                st.session_state['video_url'] = video_data['hits'][0]['videos']['medium']['url']
+    st.write("Audio Player:")
+    st.audio(audio_url, format="audio/mp3", start_time=0)
 
-        # Audio search with type
-        audio_type = st.selectbox("Choose audio type", ["music", "voice", "sound_effect"])
-        audio_query = st.text_input("Search for Audio:")
-        if st.button("Search Audio"):
-            audio_data = fetch_media(audio_query, 'audio', audio_type)
-            if audio_data['hits']:
-                st.session_state['audio_url'] = audio_data['hits'][0]['webformatURL']
+    st.write("Volume Control:")
+    volume = st.slider("Volume", min_value=0.0, max_value=1.0, value=0.5, step=0.01)
 
-    # Main Area
-    # Display Image
-    if 'image_url' in st.session_state:
-        st.image(st.session_state['image_url'], caption="Searched Image", use_column_width=True)
-
-    # Display Video
-    if 'video_url' in st.session_state:
-        st.video(st.session_state['video_url'])
-
-    # Display Audio
-    if 'audio_url' in st.session_state:
-        st.audio(st.session_state['audio_url'])
+    st.write("Instructions:")
+    st.write("1. Adjust the volume using the slider above.")
+    st.write("2. Press play on the audio player to hear the audio.")
 
 if __name__ == "__main__":
     main()
