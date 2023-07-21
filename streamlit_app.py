@@ -25,6 +25,7 @@ def save_voicelist(voice_list, filename="11voicelist.json"):
     with open(filename, "w") as f:
         json.dump(voice_list, f)
 
+@st.cache(allow_output_mutation=True, suppress_st_warning=True)
 def load_voicelist(filename="11voicelist.json"):
     try:
         if os.path.exists(filename):
@@ -38,6 +39,13 @@ def load_voicelist(filename="11voicelist.json"):
         st.warning("There was an issue loading the voice list. Defaulting to 'Bella'.")
         return ["Bella"]
 
+@st.cache(allow_output_mutation=True, suppress_st_warning=True)
+def get_audio(text, voice="Bella"):
+    return generate(
+        text=text,
+        voice=voice,
+        model="eleven_monolingual_v1"
+    )
 
 st.title('ElevenLabs Audio Generator')
 
@@ -53,5 +61,5 @@ if user_input:
 
     # Play each chunk in succession
     for chunk in text_chunks:
-        audio = generate(text=chunk, voice=selected_voice, model="eleven_monolingual_v1")
+        audio = get_audio(chunk, selected_voice)  # Using the cached function here
         st.audio(audio.content, format='audio/wav')
