@@ -3,19 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Audio API in Streamlit</title>
+    <title>Sound Effect with Howler.js</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
     <script>
-        function playSound() {
-            var context = new AudioContext();
-            var oscillator = context.createOscillator();
-            oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(440, context.currentTime);
-            oscillator.start();
-            oscillator.stop(context.currentTime + 1);
+        function playSoundEffect() {
+            var sound = new Howl({
+                src: ['https://www.example.com/path_to_sound_effect.mp3']
+            });
+            sound.play();
         }
     </script>
 </head>
 <body>
-    <button onclick="playSound()">Play Sound</button>
+    <button onclick="playSoundEffect()">Play Sound Effect</button>
 </body>
 </html>
