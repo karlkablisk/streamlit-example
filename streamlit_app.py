@@ -3,6 +3,11 @@ import streamlit as st
 def main():
     st.title("Web Audio API with Streamlit")
 
+    
+
+    # Embed the custom audio component
+    st.components.v1.html(open("audio_component.html", "r").read(), width=200, height=50)
+
     # Example audio file (replace with your audio file URL)
     audio_url = "https://example.com/audio_file.mp3"
 
@@ -18,3 +23,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
