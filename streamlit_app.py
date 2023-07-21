@@ -1,6 +1,7 @@
 import streamlit as st
 import json
 import os
+import elevenlabs
 from elevenlabs import generate, play, voices
 
 def split_text(text, limit=400):
