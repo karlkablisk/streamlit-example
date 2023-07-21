@@ -1,38 +1,69 @@
-from collections import namedtuple
-import altair as alt
-import math
-import pandas as pd
 import streamlit as st
+import requests
 
-"""
-# Welcome to Streamlit!
+# Constants
+PIXABAY_SECRET = st.secrets["PIXABAY_API_SECRET"]
+PIXABAY_API_KEY = PIXABAY_SECRET 
 
-Edit `/streamlit_app.py` to customize this app to your heart's desire :heart:
+# Pixabay API base URL
+PIXABAY_API_URL = 'https://pixabay.com/api/'
 
-If you have any questions, checkout our [documentation](https://docs.streamlit.io) and [community
-forums](https://discuss.streamlit.io).
+# Fetch media from Pixabay
+def fetch_media(query, media_type, audio_type=None):
+    params = {
+        'key': PIXABAY_API_KEY,
+        'q': query,
+        'image_type': 'photo' if media_type == 'image' else None,
+        'video_type': 'film' if media_type == 'video' else None,
+        'type': audio_type if media_type == 'audio' else None,
+        'per_page': 1  # We're only interested in the first result
+    }
+    
+    response = requests.get(PIXABAY_API_URL, params=params)
+    return response.json()
 
-In the meantime, below is an example of what you can do with just a few lines of code:
-"""
+# Main function
+def main():
+    st.title('Pixabay Media Search and Display')
 
+    # Sidebar
+    with st.sidebar:
+        st.header("Controls")
+        
+        # Image search
+        image_query = st.text_input("Search for an Image:")
+        if st.button("Search Image"):
+            image_data = fetch_media(image_query, 'image')
+            if image_data['hits']:
+                st.session_state['image_url'] = image_data['hits'][0]['webformatURL']
 
-with st.echo(code_location='below'):
-    total_points = st.slider("Number of points in spiral", 1, 5000, 2000)
-    num_turns = st.slider("Number of turns in spiral", 1, 100, 9)
+        # Video search
+        video_query = st.text_input("Search for a Video:")
+        if st.button("Search Video"):
+            video_data = fetch_media(video_query, 'video')
+            if video_data['hits']:
+                st.session_state['video_url'] = video_data['hits'][0]['videos']['medium']['url']
 
-    Point = namedtuple('Point', 'x y')
-    data = []
+        # Audio search with type
+        audio_type = st.selectbox("Choose audio type", ["music", "voice", "sound_effect"])
+        audio_query = st.text_input("Search for Audio:")
+        if st.button("Search Audio"):
+            audio_data = fetch_media(audio_query, 'audio', audio_type)
+            if audio_data['hits']:
+                st.session_state['audio_url'] = audio_data['hits'][0]['webformatURL']
 
-    points_per_turn = total_points / num_turns
+    # Main Area
+    # Display Image
+    if 'image_url' in st.session_state:
+        st.image(st.session_state['image_url'], caption="Searched Image", use_column_width=True)
 
-    for curr_point_num in range(total_points):
-        curr_turn, i = divmod(curr_point_num, points_per_turn)
-        angle = (curr_turn + 1) * 2 * math.pi * i / points_per_turn
-        radius = curr_point_num / total_points
-        x = radius * math.cos(angle)
-        y = radius * math.sin(angle)
-        data.append(Point(x, y))
+    # Display Video
+    if 'video_url' in st.session_state:
+        st.video(st.session_state['video_url'])
 
-    st.altair_chart(alt.Chart(pd.DataFrame(data), height=500, width=500)
-        .mark_circle(color='#0068c9', opacity=0.5)
-        .encode(x='x:Q', y='y:Q'))
+    # Display Audio
+    if 'audio_url' in st.session_state:
+        st.audio(st.session_state['audio_url'])
+
+if __name__ == "__main__":
+    main()
