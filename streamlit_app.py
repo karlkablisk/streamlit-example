@@ -26,13 +26,18 @@ def save_voicelist(voice_list, filename="11voicelist.json"):
         json.dump(voice_list, f)
 
 def load_voicelist(filename="11voicelist.json"):
-    if os.path.exists(filename):
-        with open(filename, "r") as f:
-            return json.load(f)
-    else:
-        voice_list = voices()
-        save_voicelist(voice_list)
-        return voice_list
+    try:
+        if os.path.exists(filename):
+            with open(filename, "r") as f:
+                return json.load(f)
+        else:
+            voice_list = voices()
+            save_voicelist(voice_list)
+            return voice_list
+    except (json.JSONDecodeError, FileNotFoundError):
+        st.warning("There was an issue loading the voice list. Defaulting to 'Bella'.")
+        return ["Bella"]
+
 
 st.title('ElevenLabs Audio Generator')
 
