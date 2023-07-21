@@ -62,4 +62,5 @@ if user_input:
     # Play each chunk in succession
     for chunk in text_chunks:
         audio = get_audio(chunk, selected_voice)  # Using the cached function here
-        st.audio(audio.content, format='audio/wav')
+        st.audio(audio, format='audio/wav')
+
