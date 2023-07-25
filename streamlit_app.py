@@ -8,10 +8,17 @@ px = pixabay.core(PIXABAY_API_KEY)
 def fetch_image(query):
     result = px.query(query)
     if len(result) > 0:
-        # Print all attributes of the result object for inspection
-        st.write(dir(result[0]))
-        return result[0].webformatURL  # This line may still cause an error, but we'll see the attributes first
-    return None
+        # Check the API call status
+        if result[0]._raw_data.get('total', 0) > 0:
+            st.write(f"API call succeeded with {result[0]._raw_data['total']} hits.")
+            return result[0].getWebformatURL()
+        else:
+            st.write("API call did not return any hits.")
+            return None
+    else:
+        st.write("API call did not return any results.")
+        return None
+
 
 
 def fetch_video(query):
