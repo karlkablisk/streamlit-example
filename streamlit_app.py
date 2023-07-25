@@ -22,7 +22,17 @@ def fetch_media(query, media_type, audio_type=None):
     }
     
     response = requests.get(PIXABAY_API_URL, params=params)
-    return response.json()
+    
+    # Check if the request was successful
+    if response.ok:
+        try:
+            return response.json()
+        except ValueError:
+            st.write("Error decoding the JSON from Pixabay API.")
+            return {}
+    else:
+        st.write(f"Error fetching data from Pixabay API. Status code: {response.status_code}")
+        return {}
 
 # Main function
 def main():
