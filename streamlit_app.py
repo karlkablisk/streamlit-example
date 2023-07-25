@@ -4,7 +4,7 @@ import random  # For randomly selecting from the results
 
 # Constants
 PIXABAY_API_KEY = '13689623-be5edb4373e4b7e250a22e3ce'  # Replace with your Pixabay API key
-
+px = pixabay.core(PIXABAY_API_KEY)
 
 BASE_IMAGE_URL = "https://pixabay.com/api/"
 BASE_VIDEO_URL = "https://pixabay.com/api/videos/"
@@ -18,11 +18,11 @@ def fetch_image(query):
     }
     
     response = requests.get(BASE_IMAGE_URL, params=params)
+    
     if response.status_code == 200:
         data = response.json()
         if data['totalHits'] > 0:
-            # Choose a random image from the results
-            return random.choice(data['hits'])['webformatURL']
+            return data['hits'][0]['webformatURL']
         else:
             st.write("API call did not return any hits.")
             return None
@@ -38,17 +38,21 @@ def fetch_video(query):
     }
 
     response = requests.get(BASE_VIDEO_URL, params=params)
+
     if response.status_code == 200:
         data = response.json()
         if data['totalHits'] > 0:
-            # Choose a random video from the results
-            return random.choice(data['hits'])['videos']['medium']['url']
+            return data['hits'][0]['videos']['medium']['url']
         else:
             st.write("API call did not return any hits.")
             return None
     else:
         st.write(f"API call failed with status code: {response.status_code}")
         return None
+
+
+
+
 
 def main():
     st.title('Pixabay Media Search and Display')
