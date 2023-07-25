@@ -1,7 +1,6 @@
 import streamlit as st
 import elevenlabs
-from elevenlabs import generate, voices, Models
-from typing import Optional, List
+from elevenlabs import generate, voices
 
 def split_text(text, limit=400):
     words = text.split()
@@ -46,8 +45,12 @@ marked_keys = st.session_state.get("marked_keys", [False]*5)
 selected_api_index = st.sidebar.selectbox("Manually select an API Key", list(range(1, 6)), index=0)
 
 # Model selection dropdown
-models = Models.from_api()
-selected_model = st.selectbox("Select a model:", [model.id for model in models])
+model_mapping = {
+    'monolingual': 'eleven_monolingual_v1',
+    'multilingual': 'eleven_multilingual_v1'
+}
+selected_model_name = st.selectbox("Select a model:", list(model_mapping.keys()))
+selected_model = model_mapping[selected_model_name]
 
 # Load or fetch voices and then display the dropdown
 voice_list = load_voicelist()
