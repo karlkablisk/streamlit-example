@@ -46,15 +46,9 @@ def main():
         image_query = st.text_input("Search for an Image:")
         if st.button("Search Image"):
             image_data = fetch_media(image_query, 'image')
-            if image_data['hits']:
+            if 'hits' in image_data and image_data['hits']:
                 st.session_state['image_url'] = image_data['hits'][0]['webformatURL']
 
-        # Video search
-        video_query = st.text_input("Search for a Video:")
-        if st.button("Search Video"):
-            video_data = fetch_media(video_query, 'video')
-            if video_data['hits']:
-                st.session_state['video_url'] = video_data['hits'][0]['videos']['medium']['url']
 
         # Audio search with type
         audio_type = st.selectbox("Choose audio type", ["music", "voice", "sound_effect"])
