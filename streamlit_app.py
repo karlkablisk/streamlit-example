@@ -1,7 +1,6 @@
 import streamlit as st
 import pixabay.core
 import requests
-import pixabay
 
 # Constants
 PIXABAY_API_KEY = st.secrets["PIXABAY_API_SECRET"]
