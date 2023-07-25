@@ -97,11 +97,6 @@ if user_input:
 
     # If no valid API keys, or they all failed
     if not generated:
-        # Splitting the input into 400 character chunks
-        text_chunks = split_text(user_input)
-
-        for chunk in text_chunks:
-            audio = get_audio(chunk, selected_voice)
-            st.audio(audio, format='audio/wav')
+        st.warning("No API key provided or all provided keys are exhausted. Cannot generate audio.")
 
 st.session_state.marked_keys = marked_keys
