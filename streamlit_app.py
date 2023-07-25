@@ -1,7 +1,8 @@
 import streamlit as st
 import pixabay.core
 import requests
-import random  # Import for random choice
+import random 
+import player
 
 # Constants
 PIXABAY_API_KEY = '13689623-be5edb4373e4b7e250a22e3ce'  # Replace with your Pixabay API key
@@ -51,33 +52,29 @@ def fetch_video(query):
         st.write(f"API call failed with status code: {response.status_code}")
         return None
 
-def main():
-    st.title('Pixabay Media Search and Display')
+def submenu_area():
+    st.sidebar.header("Controls")
+    # Image search
+    image_query = st.sidebar.text_input("Search for an Image:")
+    if st.sidebar.button("Search Image"):
+        image_url = fetch_image(image_query)
+        if image_url:
+            st.session_state['image_url'] = image_url
 
-    with st.sidebar:
-        st.header("Controls")
+    # Video search
+    video_query = st.sidebar.text_input("Search for a Video:")
+    if st.sidebar.button("Search Video"):
+        video_url = fetch_video(video_query)
+        if video_url:
+            st.session_state['video_url'] = video_url
 
-        # Image search
-        image_query = st.text_input("Search for an Image:")
-        if st.button("Search Image"):
-            image_url = fetch_image(image_query)
-            if image_url:
-                st.session_state['image_url'] = image_url
+    audio_type = st.sidebar.selectbox("Choose audio type", ["music", "voice", "sound_effect"])
+    audio_query = st.sidebar.text_input("Search for Audio:")
+    if st.sidebar.button("Search Audio"):
+        st.sidebar.write(f"Searching for audio '{audio_query}' of type '{audio_type}'... (feature not supported)")
 
-        # Video search
-        video_query = st.text_input("Search for a Video:")
-        if st.button("Search Video"):
-            video_url = fetch_video(video_query)
-            if video_url:
-                st.session_state['video_url'] = video_url
-
-        audio_type = st.selectbox("Choose audio type", ["music", "voice", "sound_effect"])
-        audio_query = st.text_input("Search for Audio:")
-        if st.button("Search Audio"):
-            st.write(f"Searching for audio '{audio_query}' of type '{audio_type}'... (feature not supported)")
-
-    # Create side-by-side columns for chat and media display
-    chat_col, media_col = st.beta_columns([1, 1])
+def main_area():
+    chat_col, media_col = st.columns([1, 1])
 
     # Chat input and display placeholder
     chat_input = chat_col.text_input("Enter your chat message:")
@@ -90,6 +87,11 @@ def main():
     if 'video_url' in st.session_state:
         # Streamlit does not currently support video controls or autoplay customization. Using autoplay in the URL.
         media_col.video(st.session_state['video_url'] + "#autoplay=1")
+
+def main():
+    st.title('Pixabay Media Search and Display')
+    submenu_area()
+    main_area()
 
 if __name__ == "__main__":
     main()
