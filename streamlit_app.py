@@ -8,14 +8,15 @@ px = pixabay.core(PIXABAY_API_KEY)
 def fetch_image(query):
     result = px.query(query)
     if len(result) > 0:
-        return result[0].webformatURL
+        return result[0]['webformatURL']  # Use dictionary key to access the URL
     return None
 
 def fetch_video(query):
     result = px.queryVideo(query)
     if len(result) > 0:
-        return result[0].videos['medium']['url']
+        return result[0]['videos']['medium']['url']  # Accessing video URL using dictionary keys
     return None
+
 
 def main():
     st.title('Pixabay Media Search and Display')
