@@ -1,31 +1,55 @@
 import streamlit as st
 import pixabay.core
+import requests
 
 # Constants
 PIXABAY_API_KEY = '13689623-be5edb4373e4b7e250a22e3ce'  # Replace with your Pixabay API key
 px = pixabay.core(PIXABAY_API_KEY)
 
+BASE_IMAGE_URL = "https://pixabay.com/api/"
+BASE_VIDEO_URL = "https://pixabay.com/api/videos/"
+
 def fetch_image(query):
-    result = px.query(query)
-    if len(result) > 0:
-        # Check the API call status
-        if result[0]._raw_data.get('total', 0) > 0:
-            st.write(f"API call succeeded with {result[0]._raw_data['total']} hits.")
-            return result[0].getWebformatURL()
+    params = {
+        'key': PIXABAY_API_KEY,
+        'q': query,
+        'image_type': 'photo',
+        'pretty': 'true'
+    }
+    
+    response = requests.get(BASE_IMAGE_URL, params=params)
+    
+    if response.status_code == 200:
+        data = response.json()
+        if data['totalHits'] > 0:
+            return data['hits'][0]['webformatURL']
         else:
             st.write("API call did not return any hits.")
             return None
     else:
-        st.write("API call did not return any results.")
+        st.write(f"API call failed with status code: {response.status_code}")
         return None
 
-
-
 def fetch_video(query):
-    result = px.queryVideo(query)
-    if len(result) > 0:
-        return result[0].videos.medium.url  # Accessing video URL using attributes
-    return None
+    params = {
+        'key': PIXABAY_API_KEY,
+        'q': query,
+        'pretty': 'true'
+    }
+
+    response = requests.get(BASE_VIDEO_URL, params=params)
+
+    if response.status_code == 200:
+        data = response.json()
+        if data['totalHits'] > 0:
+            return data['hits'][0]['videos']['medium']['url']
+        else:
+            st.write("API call did not return any hits.")
+            return None
+    else:
+        st.write(f"API call failed with status code: {response.status_code}")
+        return None
+
 
 
 
