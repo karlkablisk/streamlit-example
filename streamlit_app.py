@@ -18,14 +18,12 @@ def split_text(text, limit=400):
 
     return chunks
 
-@st.cache(allow_output_mutation=True, suppress_st_warning=True)
-def load_voicelist():
+def fetch_voicelist():
     try:
-        voice_list = voices()
-        return voice_list
+        return voices()
     except:
-        st.warning("There was an issue loading the voice list. Defaulting to 'Bella'.")
-        return ["Bella"]
+        st.sidebar.warning("There was an issue loading the voice list. Defaulting to predefined list.")
+        return ["Rachel", "Domi", "Bella", "Antoni", "Elli", "Josh", "Arnold", "Adam", "Sam"]
 
 def get_audio_with_key(api_key, text, voice="Bella", model="eleven_monolingual_v1"):
     elevenlabs.api_key = api_key
@@ -47,6 +45,12 @@ for idx, marked in enumerate(marked_keys):
     if marked:
         st.sidebar.markdown(f"<span style='color:red'>x</span> API Key {idx+1} is marked as full.", unsafe_allow_html=True)
 
+# Button to fetch new voice list
+if st.sidebar.button('Fetch New Voice List'):
+    voice_list = fetch_voicelist()
+else:
+    voice_list = ["Rachel", "Domi", "Bella", "Antoni", "Elli", "Josh", "Arnold", "Adam", "Sam"]
+
 # Manual API key selection
 options = ["NONE"] + [f"API Key {i+1}" for i in range(5)]
 selected_api_option = st.sidebar.selectbox("Manually select an API Key", options, index=0)
@@ -59,8 +63,7 @@ model_mapping = {
 selected_model_name = st.selectbox("Select a model:", list(model_mapping.keys()))
 selected_model = model_mapping[selected_model_name]
 
-# Load or fetch voices and then display the dropdown
-voice_list = load_voicelist()
+# Display the dropdown for voices
 selected_voice = st.selectbox('Select a voice:', voice_list)
 
 user_input = st.text_area('Enter/Paste your text here:', height=200)
