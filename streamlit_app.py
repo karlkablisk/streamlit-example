@@ -1,6 +1,6 @@
 import streamlit as st
+import pixabay.core
 import requests
-import random  # For randomly selecting from the results
 
 # Constants
 PIXABAY_API_KEY = '13689623-be5edb4373e4b7e250a22e3ce'  # Replace with your Pixabay API key
@@ -53,43 +53,40 @@ def fetch_video(query):
 
 
 
-
 def main():
     st.title('Pixabay Media Search and Display')
 
     with st.sidebar:
         st.header("Controls")
+
+        # Image search
         image_query = st.text_input("Search for an Image:")
         if st.button("Search Image"):
             image_url = fetch_image(image_query)
             if image_url:
                 st.session_state['image_url'] = image_url
 
+        # Video search
         video_query = st.text_input("Search for a Video:")
         if st.button("Search Video"):
             video_url = fetch_video(video_query)
             if video_url:
                 st.session_state['video_url'] = video_url
 
+        # Audio search with type (Note: Pixabay API does not provide direct support for audio)
+        # This is kept as is since you had this in your previous app version.
         audio_type = st.selectbox("Choose audio type", ["music", "voice", "sound_effect"])
         audio_query = st.text_input("Search for Audio:")
         if st.button("Search Audio"):
+            # Sample code, as the library and Pixabay API do not provide direct audio support.
             st.write(f"Searching for audio '{audio_query}' of type '{audio_type}'... (feature not supported)")
 
-    # Create side-by-side columns for chat and media display
-    chat_col, media_col = st.beta_columns([1, 1])
-
-    # Chat input and display placeholder
-    chat_input = chat_col.text_input("Enter your chat message:")
-    chat_col.text_area("Chat Display", "Chat messages will appear here.", height=300)
-
-    # Media Display
+    # Main Area
     if 'image_url' in st.session_state:
-        media_col.image(st.session_state['image_url'], caption="Searched Image", use_column_width=True)
+        st.image(st.session_state['image_url'], caption="Searched Image", use_column_width=True)
 
     if 'video_url' in st.session_state:
-        # Streamlit does not currently support video controls or autoplay customization. Using autoplay in the URL.
-        media_col.video(st.session_state['video_url'] + "#autoplay=1")
+        st.video(st.session_state['video_url'])
 
 if __name__ == "__main__":
     main()
