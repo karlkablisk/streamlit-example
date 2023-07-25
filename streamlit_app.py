@@ -25,7 +25,8 @@ def fetch_voicelist():
         st.sidebar.warning("There was an issue loading the voice list. Defaulting to predefined list.")
         return ["Rachel", "Domi", "Bella", "Antoni", "Elli", "Josh", "Arnold", "Adam", "Sam"]
 
-def get_audio_with_key(api_key, text, voice="Bella", model="eleven_monolingual_v1"):
+def get_audio(text, voice="Bella", model="eleven_monolingual_v1", api_key=None):
+    # Generate audio using the provided parameters.
     if api_key:  # only set api_key if it's provided
         elevenlabs.api_key = api_key
     return generate(
@@ -77,7 +78,7 @@ if user_input:
         api_idx = options.index(selected_api_option) - 1
         if api_keys[api_idx] and not marked_keys[api_idx]:
             try:
-                audio = get_audio_with_key(api_keys[api_idx], user_input, selected_voice, selected_model)
+                audio = get_audio(user_input, selected_voice, selected_model, api_keys[api_idx])
                 st.audio(audio, format='audio/wav')
                 generated = True
             except:
@@ -88,7 +89,7 @@ if user_input:
         for idx, api_key in enumerate(api_keys):
             if api_key and not marked_keys[idx]:
                 try:
-                    audio = get_audio_with_key(api_key, user_input, selected_voice, selected_model)
+                    audio = get_audio(user_input, selected_voice, selected_model, api_key)
                     st.audio(audio, format='audio/wav')
                     generated = True
                     break
