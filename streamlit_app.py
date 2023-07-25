@@ -26,7 +26,8 @@ def fetch_voicelist():
         return ["Rachel", "Domi", "Bella", "Antoni", "Elli", "Josh", "Arnold", "Adam", "Sam"]
 
 def get_audio_with_key(api_key, text, voice="Bella", model="eleven_monolingual_v1"):
-    elevenlabs.api_key = api_key
+    if api_key:  # only set api_key if it's provided
+        elevenlabs.api_key = api_key
     return generate(
         text=text,
         voice=voice,
