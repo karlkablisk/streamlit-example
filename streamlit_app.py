@@ -1,10 +1,11 @@
 import streamlit as st
 import pixabay.core
 import requests
+import pixabay
 
 # Constants
 PIXABAY_API_KEY = st.secrets["PIXABAY_API_SECRET"]
-px = pixabay.core(PIXABAY_API_KEY)
+px = pixabay.Image(PIXABAY_API_KEY)
 
 BASE_IMAGE_URL = "https://pixabay.com/api/"
 BASE_VIDEO_URL = "https://pixabay.com/api/videos/"
