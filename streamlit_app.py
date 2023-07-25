@@ -5,7 +5,6 @@ import elevenlabs
 from elevenlabs import generate, play, voices
 
 def split_text(text, limit=400):
-    """Split the text into chunks of up to 400 characters."""
     words = text.split()
     chunks = []
     current_chunk = ''
@@ -39,8 +38,8 @@ def load_voicelist(filename="11voicelist.json"):
         st.warning("There was an issue loading the voice list. Defaulting to 'Bella'.")
         return ["Bella"]
 
-@st.cache(allow_output_mutation=True, suppress_st_warning=True)
-def get_audio(text, voice="Bella"):
+def get_audio_with_key(api_key, text, voice="Bella"):
+    elevenlabs.api_key = api_key
     return generate(
         text=text,
         voice=voice,
@@ -49,6 +48,10 @@ def get_audio(text, voice="Bella"):
 
 st.title('ElevenLabs Audio Generator')
 
+# Sidebar for API key input
+api_keys = [st.sidebar.text_input(f"API Key {i+1}") for i in range(5)]
+marked_keys = st.session_state.get("marked_keys", [False]*5)
+
 # Load or fetch voices and then display the dropdown
 voice_list = load_voicelist()
 selected_voice = st.selectbox('Select a voice:', voice_list)
@@ -56,11 +59,25 @@ selected_voice = st.selectbox('Select a voice:', voice_list)
 user_input = st.text_area('Enter/Paste your text here:', height=200)
 
 if user_input:
-    # Splitting the input into 400 character chunks
-    text_chunks = split_text(user_input)
+    generated = False
+    for idx, api_key in enumerate(api_keys):
+        if api_key and not marked_keys[idx]:
+            try:
+                audio = get_audio_with_key(api_key, user_input, selected_voice)
+                st.audio(audio, format='audio/wav')
+                generated = True
+                break
+            except:
+                marked_keys[idx] = True
+                st.sidebar.markdown(f"API Key {idx+1} is marked as full.")
+    
+    # If no valid API keys, or they all failed
+    if not generated:
+        # Splitting the input into 400 character chunks
+        text_chunks = split_text(user_input)
 
-    # Play each chunk in succession
-    for chunk in text_chunks:
-        audio = get_audio(chunk, selected_voice)  # Using the cached function here
-        st.audio(audio, format='audio/wav')
+        for chunk in text_chunks:
+            audio = get_audio(chunk, selected_voice)
+            st.audio(audio, format='audio/wav')
 
+st.session_state.marked_keys = marked_keys
