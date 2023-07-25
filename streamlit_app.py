@@ -70,34 +70,4 @@ selected_voice = st.selectbox('Select a voice:', voice_list)
 
 user_input = st.text_area('Enter/Paste your text here:', height=200)
 
-if user_input:
-    generated = False
-
-    # Use manually selected API key if it's valid and not "NONE"
-    if selected_api_option != "NONE":
-        api_idx = options.index(selected_api_option) - 1
-        if api_keys[api_idx] and not marked_keys[api_idx]:
-            try:
-                audio = get_audio(user_input, selected_voice, selected_model, api_keys[api_idx])
-                st.audio(audio, format='audio/wav')
-                generated = True
-            except:
-                marked_keys[api_idx] = True
-
-    # If manually selected API key failed or wasn't valid, or if "NONE" was selected, try the rest
-    if not generated:
-        for idx, api_key in enumerate(api_keys):
-            if api_key and not marked_keys[idx]:
-                try:
-                    audio = get_audio(user_input, selected_voice, selected_model, api_key)
-                    st.audio(audio, format='audio/wav')
-                    generated = True
-                    break
-                except:
-                    marked_keys[idx] = True
-
-    # If no valid API keys, or they all failed
-    if not generated:
-        st.warning("No API key provided or all provided keys are exhausted. Cannot generate audio.")
-
-st.session_state.marked_keys = marked_keys
+みなさん、おはようございます
