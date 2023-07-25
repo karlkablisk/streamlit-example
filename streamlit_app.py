@@ -26,8 +26,7 @@ def fetch_voicelist():
         return ["Rachel", "Domi", "Bella", "Antoni", "Elli", "Josh", "Arnold", "Adam", "Sam"]
 
 def get_audio(text, voice="Bella", model="eleven_monolingual_v1", api_key=None):
-    # Generate audio using the provided parameters.
-    if api_key:  # only set api_key if it's provided
+    if api_key:
         elevenlabs.api_key = api_key
     return generate(
         text=text,
@@ -70,4 +69,44 @@ selected_voice = st.selectbox('Select a voice:', voice_list)
 
 user_input = st.text_area('Enter/Paste your text here:', height=200)
 
-みなさん、おはようございます
+# Add a button for generating audio
+if st.button('SPEAK') and user_input:
+    generated = False
+
+    # Use manually selected API key if it's valid and not "NONE"
+    if selected_api_option != "NONE":
+        api_idx = options.index(selected_api_option) - 1
+        if api_keys[api_idx] and not marked_keys[api_idx]:
+            try:
+                audio = get_audio(user_input, selected_voice, selected_model, api_keys[api_idx])
+                st.audio(audio, format='audio/wav')
+                generated = True
+            except:
+                marked_keys[api_idx] = True
+
+    # If manually selected API key failed or wasn't valid, or if "NONE" was selected, try the rest
+    if not generated:
+        for idx, api_key in enumerate(api_keys):
+            if api_key and not marked_keys[idx]:
+                try:
+                    audio = get_audio(user_input, selected_voice, selected_model, api_key)
+                    st.audio(audio, format='audio/wav')
+                    generated = True
+                    break
+                except:
+                    marked_keys[idx] = True
+
+    # If all provided API keys failed or "NONE" was selected, try without an API key
+    if not generated:
+        try:
+            audio = get_audio(user_input, selected_voice, selected_model)
+            st.audio(audio, format='audio/wav')
+            generated = True
+        except:
+            pass
+
+    # If audio still not generated after all attempts
+    if not generated:
+        st.warning("No API key provided or all provided keys are exhausted. Cannot generate audio.")
+
+st.session_state.marked_keys = marked_keys
