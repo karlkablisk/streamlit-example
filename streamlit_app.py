@@ -3,8 +3,7 @@ import pixabay.core
 import requests
 
 # Constants
-PIXABAY_API_SECRET = st.secrets["PIXABAY_API_SECRET"]
-PIXABAY_API_KEY = PIXABAY_API_SECRET
+PIXABAY_API_KEY = st.secrets["PIXABAY_API_SECRET"]
 px = pixabay.core(PIXABAY_API_KEY)
 
 BASE_IMAGE_URL = "https://pixabay.com/api/"
