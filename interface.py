@@ -66,6 +66,37 @@ def sidebar_area():
         if st.button("Search Audio"):
             st.write(f"Searching for audio '{audio_query}' of type '{audio_type}'... (feature not supported)")
 
+    def speaktest():
+        st.title("Voice Recognition with Streamlit")
+    
+        # Place an input box in the app
+        user_input = st.text_input("Your voice input:", key="voiceInput", help="Press the record button to speak.")
+    
+        # If there's an input, display it
+        if user_input:
+            st.write(f"You said: {user_input}")
+    
+        # Add the record button and inject the JS code
+        st.markdown("""
+            <input type="button" value="Record" onclick="record()">
+            <script>
+            function record() {
+                var recognition = new webkitSpeechRecognition();
+                recognition.lang = 'en-US';
+                recognition.onresult = function(event) {
+                    let last = event.results.length - 1;
+                    let text = event.results[last][0].transcript;
+                    document.getElementById('voiceInput').setAttribute('value', text);
+                    let event = new Event('input', { 'bubbles': true });
+                    document.getElementById('voiceInput').dispatchEvent(event);
+                };
+                recognition.start();
+            }
+            </script>
+        """, unsafe_allow_html=True)
+    
+    speaktest()
+
 def column1():
     chat_col = st.columns([2,1,1])[0]
     chat_input = chat_col.text_input("Enter your chat message:")
