@@ -3,7 +3,6 @@
 import streamlit as st
 from my_pixabay import fetch_image
 
-PIXABAY_API_KEY = st.secrets["PIXABAY_API_SECRET"]
 
 def generate_player():
     player = {}
