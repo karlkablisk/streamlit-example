@@ -75,11 +75,3 @@ def column3():
     if 'video_url' in st.session_state:
         video_col.video(st.session_state['video_url'] + "#autoplay=1")
 
-def main():
-    sidebar_area()
-    column1()
-    column2()
-    column3()
-
-if __name__ == "__main__":
-    main()
