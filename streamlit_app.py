@@ -2,6 +2,7 @@ import streamlit as st
 import pixabay.core
 import requests
 import random 
+import interface
 import player
 import chat
 from my_pixabay import fetch_image, fetch_video
