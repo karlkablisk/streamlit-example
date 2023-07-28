@@ -5,8 +5,9 @@ import random
 import requests
 import pixabay.core
 
+# Constants
 PIXABAY_API_KEY = '13689623-be5edb4373e4b7e250a22e3ce'  # Replace with your Pixabay API key
-px = pixabay.core.Pixabay(PIXABAY_API_KEY)
+px = pixabay.core(PIXABAY_API_KEY)
 
 BASE_IMAGE_URL = "https://pixabay.com/api/"
 BASE_VIDEO_URL = "https://pixabay.com/api/videos/"
