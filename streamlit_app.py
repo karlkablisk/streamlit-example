@@ -6,7 +6,7 @@ import player
 import chat
 
 # Constants
-PIXABAY_API_KEY = st.secrets["PIXABAY_API_SECRET"]
+PIXABAY_API_KEY = '13689623-be5edb4373e4b7e250a22e3ce'  # Replace with your Pixabay API key
 px = pixabay.core(PIXABAY_API_KEY)
 
 BASE_IMAGE_URL = "https://pixabay.com/api/"
